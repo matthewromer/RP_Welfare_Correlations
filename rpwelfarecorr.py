@@ -1,4 +1,4 @@
-'''
+"""
 Correlation analysis tools for Rethink Priorities p(sentience)-adjusted
 welfare range estimates
 
@@ -6,7 +6,7 @@ Functions:
 
     gen_corr_samples(species_list, num_samples)
     adj_wr_correlation(species, species_wr, num_samples)
-    heatmap_wr_ranges(data1, data2, animal1, animal2, title_str, text_loc,
+    heatmap_wr_ranges(data1, data2, animal1, animal2, title_str,
                       num_bins, save_en, lims)
     compute_summary_stats_arr(samples_arr, print_en, name):
 
@@ -17,7 +17,7 @@ Misc variables:
 
 See forum.effectivealtruism.org/posts/Qk3hd6PrFManj8K6o
 
-'''
+"""
 
 # Imports
 import os
@@ -35,31 +35,30 @@ sent_est_dir = os.path.join(os.path.dirname(__file__), 'Sentience_Estimates')
 
 
 def gen_corr_samples(species_list, num_samples):
-    '''
-    Generates coorelated samples from the RP moral weight distributions
+    """
+    Generate coorelated samples from the RP moral weight distributions.
 
-            Parameters:
-                species_list:    List of species names to generate samples
-                                 for. Allowable values:
-                                  - 'pigs'
-                                  -  'chickens'
-                                  - 'octopuses'
-                                  - 'carp'
-                                  - 'bees'
-                                  - 'salmon'
-                                  - 'crayfish'
-                                  - 'shrimp'
-                                  - 'crabs'
-                                  - 'bsf'
-                                  - 'silkworms'
-                num_samples:     Number of samples to generate (int)
+        Parameters_
+            species_list:    List of species names to generate samples
+                             for. Allowable values:
+                              - 'pigs'
+                              -  'chickens'
+                              - 'octopuses'
+                              - 'carp'
+                              - 'bees'
+                              - 'salmon'
+                              - 'crayfish'
+                              - 'shrimp'
+                              - 'crabs'
+                              - 'bsf'
+                              - 'silkworms'
+            num_samples:     Number of samples to generate (int)
 
-            Returns:
-                corr_samples:    Dictionary containing a list of num_samples
-                                 draws per species in species_list
+        Returns_
+            corr_samples:    Dictionary containing a list of num_samples
+                             draws per species in species_list
 
-    '''
-
+    """
     # Warn user if using a small number of samples
     if num_samples < 90:
         warnings.warn('Low number of samples requested. Medians may be skewed')
@@ -109,33 +108,32 @@ def gen_corr_samples(species_list, num_samples):
 
 
 def adj_wr_correlation(species, species_wr, num_samples):
-    '''
-    Adjusts a welfare range estimate for p(sentience)
+    """
+    Adjust a welfare range estimate for p(sentience).
 
-            Parameters:
-                species:         Species string. Allowable values:
-                                  - 'pigs'
-                                  -  'chickens'
-                                  - 'octopuses'
-                                  - 'carp'
-                                  - 'bees'
-                                  - 'salmon'
-                                  - 'crayfish'
-                                  - 'shrimp'
-                                  - 'crabs'
-                                  - 'bsf'
-                                  - 'silkworms'
-                species_wr       List of samples for species welfare range
-                num_samples:     Number of samples to generate (int)
+        Parameters_
+            species:     Species string. Allowable values:
+                          - 'pigs'
+                          -  'chickens'
+                          - 'octopuses'
+                          - 'carp'
+                          - 'bees'
+                          - 'salmon'
+                          - 'crayfish'
+                          - 'shrimp'
+                          - 'crabs'
+                          - 'bsf'
+                          - 'silkworms'
+            species_wr   List of samples for species welfare range
+            num_samples: Number of samples to generate (int)
 
-            Returns:
-                species_adj_wr: List of adjusted welfare range estimate samples
+        Returns_
+            species_adj_wr: List of adjusted welfare range estimate samples
 
-            Notes:
-                Created based on one_species_adj_wr in RP moral weights
-                project code
-    '''
-
+        Notes_
+            Created based on one_species_adj_wr in RP moral weights
+            project code
+    """
     # Need to treat shrimp specilly since they were not included in the
     # p(sentience) calculations
     if species != 'shrimp':
@@ -159,24 +157,22 @@ def adj_wr_correlation(species, species_wr, num_samples):
     return species_adj_wr
 
 
-def heatmap_wr_ranges(data1, data2, animal1, animal2, title_str, text_loc,
+def heatmap_wr_ranges(data1, data2, animal1, animal2, title_str,
                       num_bins=20, save_en=False, lims=[0, 2]):
-    '''
-    Creates a heatmap for two welfare ranges
+    """
+    Create a heatmap for two welfare ranges.
 
-            Parameters:
-                data1:           Welfare range estimate data for 1st species
-                data2:           Welfare range estimate data for 2nd species
-                animal1:         Name of 1st species
-                animal1:         Name of 2nd species
-                title_str:       Figure title
-                text_loc:        Location on figure to place label
-                num_bins:        Number of bins per axis for heatmap
-                save_en:         Enable saving of figure
-                lims:            X/Y plot limits
+        Parameters_
+            data1:           Welfare range estimate data for 1st species
+            data2:           Welfare range estimate data for 2nd species
+            animal1:         Name of 1st species
+            animal1:         Name of 2nd species
+            title_str:       Figure title
+            num_bins:        Number of bins per axis for heatmap
+            save_en:         Enable saving of figure
+            lims:            X/Y plot limits
 
-    '''
-
+    """
     # Compute correlation and mean data for labeling
     r = np.corrcoef(data1, data2)
     mean1 = round(np.mean(data1), 4)
@@ -189,6 +185,9 @@ def heatmap_wr_ranges(data1, data2, animal1, animal2, title_str, text_loc,
     ax.set_facecolor('lightgray')
     h = plt.hist2d(data1, data2, density=True, bins=num_bins,
                    norm=mpl.colors.LogNorm(), cmap=mpl.cm.Reds)
+
+    # Compute text location
+    text_loc = [lims[1]*0.525, lims[1]*0.9]
 
     # Add labels
     ax.set_xlabel('P(sentience)-Adjusted Welfare Range of {}'.format(animal1))
@@ -211,19 +210,18 @@ def heatmap_wr_ranges(data1, data2, animal1, animal2, title_str, text_loc,
 
 
 def compute_summary_stats_arr(samples_arr, print_en=False, name=""):
-    '''
-    Computes summary stats for a numpy array
+    """
+    Compute summary stats for a numpy array.
 
-            Parameters:
-                samples_arr:     Array of input samples
-                print_en:        Flag to enable printing results
-                name:            Title to print with results
+        Parameters_
+            samples_arr:     Array of input samples
+            print_en:        Flag to enable printing results
+            name:            Title to print with results
 
-            Returns:
-                sum_stats:       [5, 25, 50, 75, 95] percentiles
+        Returns_
+            sum_stats:       [5, 25, 50, 75, 95] percentiles
 
-    '''
-
+    """
     sum_stats = np.percentile(samples_arr, [5, 25, 50, 75, 95])
     if print_en:
         np.set_printoptions(
